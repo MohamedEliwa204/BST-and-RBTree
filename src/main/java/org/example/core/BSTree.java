@@ -11,29 +11,7 @@ public class BSTree implements Tree {
 
     @Override
     public boolean insert(int v) {
-        Node node = new Node(v);
-        Node x = root;
-        Node y = null;
-        while (x != null) {
-            y = x;
-            if (node.getValue() < x.getValue()) {
-                x = x.getLeft();
-            } else if (node.getValue() == x.getValue()) {
-                return false;
-            } else {
-                x = x.getRight();
-            }
-        }
-        node.setParent(y);
-        if (y == null) {
-            root = node;
-        } else if (node.getValue() < y.getValue()) {
-            y.setLeft(node);
-        } else {
-            y.setRight(node);
-        }
-        size++;
-        return true;
+        return insertHelper(v) != null;
     }
 
     @Override
@@ -137,5 +115,31 @@ public class BSTree implements Tree {
             T = T.getLeft();
         }
         return T;
+    }
+
+    protected Node insertHelper(int v){
+        Node node = new Node(v);
+        Node x = root;
+        Node y = null;
+        while (x != null) {
+            y = x;
+            if (node.getValue() < x.getValue()) {
+                x = x.getLeft();
+            } else if (node.getValue() == x.getValue()) {
+                node = null;
+            } else {
+                x = x.getRight();
+            }
+        }
+        node.setParent(y);
+        if (y == null) {
+            root = node;
+        } else if (node.getValue() < y.getValue()) {
+            y.setLeft(node);
+        } else {
+            y.setRight(node);
+        }
+        size++;
+        return node;
     }
 }
