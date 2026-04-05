@@ -142,4 +142,8 @@ public class BSTree implements Tree {
         size++;
         return node;
     }
+
+    public Node getRoot() {
+        return root;
+    }
 }
