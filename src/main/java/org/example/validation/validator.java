@@ -1,11 +1,20 @@
 package org.example.validation;
 
+import org.example.core.BSTree;
 import org.example.core.Node;
 import org.example.core.RBTree;
 
 public class validator {
 
+    public static void check(BSTree tree){
+        if (tree.getRoot() == null){
+            return;
+        }
 
+        if (!isBST(tree.getRoot(), null, null)){
+            throw new IllegalStateException("VALIDATION FAILED: Tree violates BST property.");
+        }
+    }
     public static void check(RBTree tree){
         if (tree.getRoot() == null){
             return;

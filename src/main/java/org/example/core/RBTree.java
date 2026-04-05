@@ -1,5 +1,7 @@
 package org.example.core;
 
+import org.example.validation.validator;
+
 public class RBTree extends BSTree {
 
 
@@ -14,6 +16,9 @@ public class RBTree extends BSTree {
             return false;
         }
         insertFixup(z);
+        if (VALIDATE){
+            validator.check(this);
+        }
         return true;
     }
 

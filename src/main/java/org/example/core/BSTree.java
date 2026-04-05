@@ -1,9 +1,11 @@
 package org.example.core;
 
+import org.example.validation.validator;
+
 public class BSTree implements Tree {
     protected int size;
     protected Node root;
-
+    static final boolean VALIDATE= true;
     public BSTree() {
         this.size = 0;
         this.root = null;
@@ -11,7 +13,11 @@ public class BSTree implements Tree {
 
     @Override
     public boolean insert(int v) {
-        return insertHelper(v) != null;
+        Node node = insertHelper(v);
+        if (VALIDATE){
+            validator.check(this);
+        }
+        return node != null;
     }
 
     @Override
@@ -40,6 +46,9 @@ public class BSTree implements Tree {
                     y.getLeft().setParent(y);
                 }
                 size--;
+                if (VALIDATE){
+                    validator.check(this);
+                }
                 return true;
             }
         }
@@ -126,7 +135,7 @@ public class BSTree implements Tree {
             if (node.getValue() < x.getValue()) {
                 x = x.getLeft();
             } else if (node.getValue() == x.getValue()) {
-                node = null;
+                return null;
             } else {
                 x = x.getRight();
             }
