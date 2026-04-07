@@ -16,7 +16,7 @@ public class RBTree extends BSTree {
             return false;
         }
         insertFixup(z);
-        if (VALIDATE){
+        if (VALIDATE) {
             validator.check(this);
         }
         return true;
@@ -24,15 +24,130 @@ public class RBTree extends BSTree {
 
     @Override
     public boolean delete(int v) {
-        return super.delete(v);
+        Node z = root;
+        Node y = z;
+        Node x = null;
+        Node xParent = null;
+        boolean yIsRed = y.isRed();
+        while (z != null) {
+            if (v < z.getValue()) {
+                z = z.getLeft();
+            } else if (v > z.getValue()) {
+                z = z.getRight();
+            } else {
+                if (z.getLeft() == null) {
+                    x = z.getRight();
+                    xParent = z.getParent();
+                    Transplant(z, z.getRight());
+                } else if (z.getRight() == null) {
+                    x = z.getLeft();
+                    xParent = z.getParent();
+                    Transplant(z, z.getLeft());
+                } else {
+                    y = Minimum(z.getRight());
+                    yIsRed = y.isRed();
+                    x = y.getRight();
+                    if (y.getParent() == z) {
+                        xParent = y;
+                        if (x != null) x.setParent(y);
+                    } else {
+                        xParent = y.getParent();
+                        Transplant(y, y.getRight());
+                        y.setRight(z.getRight());
+                        y.getRight().setParent(y);
+                    }
+                    Transplant(z, y);
+                    y.setLeft(z.getLeft());
+                    y.getLeft().setParent(y);
+                    y.setRed(z.isRed());
+                }
+                if (!yIsRed) {
+                    deleteFixUp(x, xParent);
+                }
+                size--;
+                if (VALIDATE) {
+                    validator.check(this);
+                }
+                return true;
+            }
+
+        }
+        return false;
     }
 
+    private void deleteFixUp(Node x, Node xParent) {
+        Node w;
+        while (x != root && isBlack(x)) {
+            if (x == xParent.getLeft()) {
+                w = xParent.getRight();
+                if (isRed(w)) {
+                    w.changeColor();
+                    xParent.setRed(true);
+                    leftRotate(xParent);
+                    w = xParent.getRight();
+                }
+                if (isBlack(w.getRight()) && isBlack(w.getLeft())) {
+                    w.setRed(true);
+                    x = xParent;
+                    xParent = x.getParent();
+                } else {
+                    if (isRed(w.getLeft()) && isBlack(w.getRight())) {
+                        w.changeColor();
+                        w.getLeft().changeColor();
+                        rightRotate(w);
+                        w = xParent.getRight();
+                    }
+                    w.setRed(isRed(xParent));
+                    xParent.setRed(false);
+                    if (w.getRight() != null) w.getRight().setRed(false);
+                    leftRotate(xParent);
+                    x = root;
+                }
+            }else {
+                w = xParent.getLeft();
+                if (isRed(w)){
+                    w.changeColor();
+                    xParent.setRed(true);
+                    rightRotate(xParent);
+                    w  = xParent.getLeft();
+                }
+                if (isBlack(w.getRight()) && isBlack(w.getLeft())){
+                    w.setRed(true);
+                    x = xParent;
+                    xParent = x.getParent();
+                }else {
+                    if (isRed(w.getRight()) && isBlack(w.getLeft())){
+                        w.changeColor();
+                        w.getRight().changeColor();
+                        leftRotate(w);
+
+                        w = xParent.getLeft();
+                    }
+                    w.setRed(isRed(xParent));
+                    xParent.setRed(false);
+                    if (w.getLeft() != null) w.getLeft().setRed(false);
+                    rightRotate(xParent);
+                    x = root;
+                }
+            }
+        }
+        if (x != null){
+            x.setRed(false);
+        }
+    }
 
     private boolean isRed(Node node) {
         if (node == null) {
             return false;
         }
         return node.isRed();
+    }
+
+    private boolean isBlack(Node node){
+        if (node ==  null){
+            return true;
+        }
+        return !node.isRed();
     }
 
     private void insertFixup(Node z) {
@@ -62,7 +177,7 @@ public class RBTree extends BSTree {
                     z.getParent().getParent().setRed(true);
                     z = z.getParent().getParent();
                 } else {
-                    if(z == z.getParent().getLeft()){
+                    if (z == z.getParent().getLeft()) {
                         z = z.getParent();
                         rightRotate(z);
                     }
@@ -79,15 +194,15 @@ public class RBTree extends BSTree {
     private void leftRotate(Node x) {
         Node y = x.getRight();
         y.setParent(x.getParent());
-        if (x.getParent() == null){
+        if (x.getParent() == null) {
             root = y;
         } else if (x.getParent().getLeft() == x) {
             x.getParent().setLeft(y);
-        }else {
+        } else {
             x.getParent().setRight(y);
         }
         x.setRight(y.getLeft());
-        if (y.getLeft() != null){
+        if (y.getLeft() != null) {
             y.getLeft().setParent(x);
         }
         y.setLeft(x);
@@ -97,15 +212,15 @@ public class RBTree extends BSTree {
     private void rightRotate(Node x) {
         Node y = x.getLeft();
         y.setParent(x.getParent());
-        if (x.getParent() == null){
+        if (x.getParent() == null) {
             root = y;
-        }else if(x.getParent().getLeft() == x){
+        } else if (x.getParent().getLeft() == x) {
             x.getParent().setLeft(y);
-        }else {
+        } else {
             x.getParent().setRight(y);
         }
         x.setLeft(y.getRight());
-        if (y.getRight() != null){
+        if (y.getRight() != null) {
             y.getRight().setParent(x);
         }
         y.setRight(x);
