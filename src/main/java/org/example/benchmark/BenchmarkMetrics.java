@@ -36,4 +36,7 @@ public class BenchmarkMetrics {
     public void printReport(String operationName, String treeType){
         System.out.printf("%-20s | %-5s | Mean: %6.2f ms | Median: %6.2f ms | SD: %6.2f ms\n", operationName, treeType, mean, median, stdv);
     }
+    public double getMean(){
+        return this.mean;
+    }
 }

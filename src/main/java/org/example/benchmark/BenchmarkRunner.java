@@ -4,6 +4,7 @@ import org.example.core.BSTree;
 import org.example.core.RBTree;
 
 import java.util.Random;
+import java.util.SortedMap;
 
 public class BenchmarkRunner {
     private static final int WARMUP_RUNS = 3;
@@ -45,7 +46,10 @@ public class BenchmarkRunner {
 
         long[] bsSortTime = new long[MEASURE_RUNS];
         long[] rbSortTime = new long[MEASURE_RUNS];
-
+        int bsHeight = 0;
+        int rbHeight = 0;
+        int bsHeight1 = 0;
+        int rbHeight1 = 0;
         int n = data.length;
         int[] searchData = new int[n];
         System.arraycopy(data, 0, searchData, 0, n/2);
@@ -81,7 +85,10 @@ public class BenchmarkRunner {
             long rbInsertE = System.nanoTime();
             rbTree.inOrder();
             long rbSortE = System.nanoTime();
-
+            if (i == TOTAL_RUNS - 1){
+                bsHeight = bsTree.height();
+                rbHeight = rbTree.height();
+            }
             long bsSearchS = System.nanoTime();
             for (int val : searchData){
                 bsTree.contains(val);
@@ -105,7 +112,10 @@ public class BenchmarkRunner {
                 rbTree.delete(val);
             }
             long rbDeleteE = System.nanoTime();
-
+            if (i == TOTAL_RUNS - 1){
+                bsHeight1 = bsTree.height();
+                rbHeight1 = rbTree.height();
+            }
             if (i >= WARMUP_RUNS){
                 int idx = i - WARMUP_RUNS;
                 bstInsertTime[idx] = bsInsertE - bsInsertS;
@@ -123,18 +133,30 @@ public class BenchmarkRunner {
         BenchmarkMetrics rbMetrics = new BenchmarkMetrics(rbInsertTime);
         bsMetrics.printReport("Insert 100k", "BST");
         rbMetrics.printReport("Insert 100k", "RBT");
+        double insertSpeedUp = bsMetrics.getMean() / rbMetrics.getMean();
+        System.out.printf("Insert SpeedUp: %.2fx\n", insertSpeedUp);
+        System.out.println("BST Height: " + bsHeight);
+        System.out.println("RBT Height: " + rbHeight);
         bsMetrics = new BenchmarkMetrics(bsSortTime);
         rbMetrics = new BenchmarkMetrics(rbSortTime);
         bsMetrics.printReport("Sort", "BST");
         rbMetrics.printReport("Sort", "RBT");
+        double sortSpeedUp = bsMetrics.getMean() / rbMetrics.getMean();
+        System.out.printf("sort SpeedUp: %.2fx\n", sortSpeedUp);
         bsMetrics = new BenchmarkMetrics(bsSearchTime);
         rbMetrics = new BenchmarkMetrics(rbSearchTime);
         bsMetrics.printReport("Search", "BST");
         rbMetrics.printReport("Search", "RBT");
+        double searchSpeedUp = bsMetrics.getMean() / rbMetrics.getMean();
+        System.out.printf("Search SpeedUp: %.2fx\n", searchSpeedUp);
         bsMetrics = new BenchmarkMetrics(bsDeleteTime);
         rbMetrics = new BenchmarkMetrics(rbDeleteTime);
         bsMetrics.printReport("Delete", "BST");
         rbMetrics.printReport("Delete", "RBT");
+        double deleteSpeedUp = bsMetrics.getMean() / rbMetrics.getMean();
+        System.out.printf("Delete SpeedUp: %.2fx\n", deleteSpeedUp);
+        System.out.println("BST Height: " + bsHeight1);
+        System.out.println("RBT Height: " + rbHeight1);
         System.out.println("\n----------------------------------------\n");
     }
 }

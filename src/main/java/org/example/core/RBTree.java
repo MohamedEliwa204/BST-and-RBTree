@@ -86,20 +86,20 @@ public class RBTree extends BSTree {
                     leftRotate(xParent);
                     w = xParent.getRight();
                 }
-                if (isBlack(w.getRight()) && isBlack(w.getLeft())) {
-                    w.setRed(true);
+                if (isBlack(rightOf(w)) && isBlack(leftOf(w))) {
+                    if (w != null) w.setRed(true);
                     x = xParent;
                     xParent = x.getParent();
                 } else {
-                    if (isRed(w.getLeft()) && isBlack(w.getRight())) {
+                    if (isRed(leftOf(w)) && isBlack(rightOf(w))) {
                         w.changeColor();
-                        w.getLeft().changeColor();
+                        leftOf(w).changeColor();
                         rightRotate(w);
                         w = xParent.getRight();
                     }
                     w.setRed(isRed(xParent));
                     xParent.setRed(false);
-                    if (w.getRight() != null) w.getRight().setRed(false);
+                    if (rightOf(w) != null) rightOf(w).setRed(false);
                     leftRotate(xParent);
                     x = root;
                 }
@@ -111,21 +111,21 @@ public class RBTree extends BSTree {
                     rightRotate(xParent);
                     w  = xParent.getLeft();
                 }
-                if (isBlack(w.getRight()) && isBlack(w.getLeft())){
-                    w.setRed(true);
+                if (isBlack(rightOf(w)) && isBlack(leftOf(w))){
+                    if (w != null) w.setRed(true);
                     x = xParent;
                     xParent = x.getParent();
                 }else {
-                    if (isRed(w.getRight()) && isBlack(w.getLeft())){
+                    if (isRed(rightOf(w)) && isBlack(leftOf(w))){
                         w.changeColor();
-                        w.getRight().changeColor();
+                        rightOf(w).changeColor();
                         leftRotate(w);
 
                         w = xParent.getLeft();
                     }
                     w.setRed(isRed(xParent));
                     xParent.setRed(false);
-                    if (w.getLeft() != null) w.getLeft().setRed(false);
+                    if (leftOf(w) != null) leftOf(w).setRed(false);
                     rightRotate(xParent);
                     x = root;
                 }
@@ -225,5 +225,18 @@ public class RBTree extends BSTree {
         }
         y.setRight(x);
         x.setParent(y);
+    }
+    private Node leftOf(Node node){
+        if (node == null){
+            return null;
+        }
+        return node.getLeft();
+    }
+
+    private Node rightOf(Node node){
+        if (node == null){
+            return null;
+        }
+        return node.getRight();
     }
 }
