@@ -5,7 +5,7 @@ import org.example.validation.validator;
 public class BSTree implements Tree {
     protected int size;
     protected Node root;
-    static final boolean VALIDATE= true;
+    public static boolean VALIDATE= true;
     public BSTree() {
         this.size = 0;
         this.root = null;
